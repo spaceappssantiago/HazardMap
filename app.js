@@ -36,18 +36,25 @@ app.get('/map', function(req, res) {
 	
 });
 
-tweets = [];
+var tweets = [];
 
 function spit_coordinates(data) {
+//console.log('********************* TEST **********************')
+console.log(tweets);
+console.log(data.coordinates)
   if(data && data.coordinates) {
-    coordinates = data.coordinates.coordinates.split(',');
-    lat = coordinates[0];
+    coordinates = data.coordinates.coordinates;
+	lat = coordinates[0];
     lon = coordinates[1];
     message = data.text;
     id = data.id;
     
     var tweet={'latitud': lat, 'longitud': lon, 'id': id, 'descripcion': message};
-    tweets.push(tweet);
+
+console.log('llegueeeee');
+console.log(tweet)    
+
+	tweets.push(tweet);
     // TODO: Limit to X number to avoid overflow
     
     socket.emit('new-tweet', tweet);
@@ -57,12 +64,10 @@ function spit_coordinates(data) {
 // Web-Sockets
 var io = require('socket.io').listen(app);
 var socket=io.of('/stream').on('connection', function(client) {
-	client.on('subscribe', function() {
-		client.emit('tweet-list', tweets);
-	});
+	client.emit('tweet-list', tweets);
 });
 
-create_streaming({track: 'terremoto', data: spit_coordinates});
+create_streaming({track: 'terremoto', data: spit_coordinates, error: function(){}});
 
 app.listen(3000);
 console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);

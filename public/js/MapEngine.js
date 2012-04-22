@@ -146,25 +146,36 @@ var MapEngine = function(w, d) {
 
 $().ready(function() {
 
-
-
 /* CODIGO ORDINARIO */
 
 function jsonHazardMap(){
 //Variable de configuracion
-var cantidadRegistro = 2000;
+var cantidadRegistro = 100;
 var cantidadRegionRandom = 15;
 //Lantitud 35,70
 // Longitud 70, 130
 var arrayJson = new Array();
 var contador = 0;
 for(contador = 1; contador <= cantidadRegistro ; contador ++) {
-   var valor = {id:1, longitud : 70,  latitud: 35, descripcion: "Descripcion1"};
-   valor.id = contador;
-   valor.longitud  = -1*(Math.floor(Math.random()*1000)/1000 + 70.450) ;
-   valor.latitud  = -1*(Math.floor(Math.random()*30000)/1000 + 18.450) ;
-   valor.descripcion =  "Descripcion:" + contador;
-  
+
+     var valor = {id:1, longitud : 70,  latitud: 35, descripcion: "Descripcion1"};
+
+     var socket = io.connect('/stream');
+     var connected = false;
+     socket.on('connect', function() {
+       connected = true;
+       socket.on('tweet-list', function(tweets) {
+         // this is the initial list of tweets to load the map
+         console.log(tweets);
+         valor.id = tweets.id;
+         valor.longitud  = tweets.longitud ;
+         valor.latitud  = tweets.latitud ;
+         valor.descripcion =  tweets.descripcion;
+       });
+       socket.on('new-tweet', function(newTweet) {
+         // this is a new tweet that you must add to the map
+         console.log(newTweet);
+       });
    arrayJson.push(valor);
    //console.log(valor.longitud+" - "+valor.latitud );
 }
@@ -172,6 +183,7 @@ return arrayJson;
 
 }
 /* codigo ordinario fin*/
+
 
 
 

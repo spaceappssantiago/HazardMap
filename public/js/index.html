@@ -9,17 +9,19 @@
     
     <script src="/socket.io/socket.io.js"></script>
     <script>
-		var socket = io.connect('/stream');
+	/*	var socket = io.connect('/stream');
 		var connected = false;
 		socket.on('connect', function() {
 			connected = true;
 			socket.on('tweet-list', function(tweets) {
 				// this is the initial list of tweets to load the map 
+                                console.log(tweets);
 			});
 			socket.on('new-tweet', function(newTweet) {
 				// this is a new tweet that you must add to the map
+				console.log(newTweet);
 			});
-		});
+		});*/
     </script>
      
 </head>
