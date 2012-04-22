@@ -1,0 +1,186 @@
+/**
+ * @fileoverview A simple rule.
+ * This file provides the class teco.maps.webmap.tools.TecoRuler this class is
+ * based in old ruler implementation in timberline_webmapping library.
+ *
+ * @author Gustavo Lacoste <gustavo.lacoste@tecogroup.ca>
+ * @version 0.1 as of 28 Jun 2011
+ * @license Copyright 2011 Tecogroup. All rights reserved.
+ * @supported IE6+, WebKit 525+, Firefox 2+.
+ */
+
+goog.provide('teco.maps.webmap.tools.TecoRuler');
+
+/**
+ * Constructor of the rule, define the line style and other default options.
+ * @constructor
+ */
+teco.maps.webmap.tools.TecoRuler = function() {
+  var rulePolyOptions = {     // default options for the rule polyline
+        strokeColor: '#ffff01',
+        strokeOpacity: 0.8,
+        strokeWeight: 4
+  };
+
+  this.rulerPoly = new google.maps.Polyline(rulePolyOptions);
+  this.isFirstDraw=true;
+  this.redraw();
+  this.isActiveRuler = false; // by default the rule is not enabled
+};
+
+teco.maps.webmap.tools.TecoRuler.prototype.redraw = function() {
+  this.rulerPoly.setMap(GMAP); // GMAP is a global const with the gmap obj
+  this.markers = [];
+  this.isFirstDraw=false;
+}
+
+
+/**
+ * Enable or disable the ruler, event listener use this.
+ * @param {boolean} boolean flag.
+ */
+teco.maps.webmap.tools.TecoRuler.prototype.setIsActiveRuler = function(bFlag) {
+  this.isActiveRuler = bFlag;
+};
+
+/**
+ * Initialize the rule.
+ */
+teco.maps.webmap.tools.TecoRuler.prototype.init = function() {
+
+    var self = this; //emulation of the GEvent.bind method deprecated in api v3
+    google.maps.event.addListener(GMAP, 'click', function(event) {
+      if (self.isActiveRuler) {
+        self.createVertex(event);
+      }
+    });
+
+  /* detect the changes in the select and refresh the measure information*/
+  $('#conversion_scale').change(function() {
+    if (self.isActiveRuler) {
+      self.updateTotalDistanceInfo();
+    }
+  });
+};
+
+/**
+ * Clear all rule element from the map (vertexs, lines, etc)
+ */
+teco.maps.webmap.tools.TecoRuler.prototype.clear = function() {
+   this.rulerPoly.setMap(null);
+   for (var i = 0; i < this.markers.length; i++) {
+     this.markers[i].setMap(null);
+   }
+  var rulePolyOptions = {     // default options for the rule polyline
+        strokeColor: '#ffff01',
+        strokeOpacity: 0.8,
+        strokeWeight: 4
+  };
+  this.rulerPoly = new google.maps.Polyline(rulePolyOptions);
+  this.rulerPoly.setMap(GMAP); // GMAP is a global const with the gmap object
+  this.markers = [];
+  this.setTotalDistanceInfo(0);
+  this.isFirstDraw=true; // for redraw the information in the map
+};
+
+
+/**
+ * Create a new vertex for the route.
+ * @param {MouseEvent} a google maps mouse click event.
+ * @see http://code.google.com/intl/es-ES/apis/maps/documentation/javascript/reference.html#MouseEvent
+ */
+teco.maps.webmap.tools.TecoRuler.prototype.createVertex = function(event) {
+  if(this.isFirstDraw){this.redraw();}
+  if (event.latLng) { // si hay un latlng en el punto donde se hizo click
+
+          var icoEditablePoint = new google.maps.MarkerImage('images/redpoint.png',
+                  new google.maps.Size(5, 5),
+                  new google.maps.Point(0, 0),
+                  new google.maps.Point(3, 5)
+          );
+
+          var icoLastPoint = new google.maps.Marker({
+            position: event.latLng,
+            icon: icoEditablePoint,
+            map: GMAP,
+            draggable: false
+          });
+          this.markers.push(icoLastPoint);
+          //markers.push(icoLastPoint);
+          this.path = this.rulerPoly.getPath();
+          this.path.push(event.latLng);
+
+          this.updateTotalDistanceInfo();
+          marker = null;
+  }
+  event = null;
+};
+
+
+/**
+ * Update the total distance info.
+ */
+teco.maps.webmap.tools.TecoRuler.prototype.updateTotalDistanceInfo = function() {
+    // I preferred to calculate the distance from zero for  a more modular system
+    var totalDistance = 0;
+try
+  {
+
+      if (this.path.getLength() > 1) {
+        for (var i = 0; i < this.path.getLength() - 1; i++) {
+          totalDistance = totalDistance + this.distance(this.path.getAt(i).lat(), this.path.getAt(i).lng(), this.path.getAt(i + 1).lat(), this.path.getAt(i + 1).lng());
+        }
+      }
+  }
+catch(e){}
+
+this.setTotalDistanceInfo(totalDistance);
+
+};
+
+/**
+ * Update the total distance info.
+ */
+teco.maps.webmap.tools.TecoRuler.prototype.setTotalDistanceInfo = function(totalDistance) {
+    var scale=$('#conversion_scale').find('option:selected').val();
+    if(scale==null){
+      scale='m';
+    }
+    var traslateDistance = this.convertMtTo(totalDistance, scale);
+    document.getElementById('total-measured-length').innerHTML = Math.round(traslateDistance);
+    var traslateDistance = this.convertMtTo(totalDistance, scale);
+    document.getElementById('total-measured-length').innerHTML = Math.round(traslateDistance);
+};
+
+/**
+ * Convert the number of meters to the equivalent unit previous select
+ * @param {integer} a input meters number for convert.
+ * @param {string} a output unit to convert the meters.
+ * @return {number} input param convert in output unit.
+ */
+teco.maps.webmap.tools.TecoRuler.prototype.convertMtTo = function(mts,unit) {
+  var convertTable = {'cm': 100, 'm': 1, 'km': 0.001, 'mi': 0.000621};
+  return mts * convertTable[unit];
+};
+
+/**
+ * Calculate distance between two coordinates in meters using the haversine
+ * formula
+ * @param {lat1} latitude coord of the first point.
+ * @param {lon1} longitude coord of the first point.
+ * @param {lat2} latitude coord of the second point.
+ * @param {lon2} longitude coord of the second point.
+ * @see http://en.wikipedia.org/wiki/Haversine_formula
+ * @return {number} distance in meter between first and second point.
+ */
+teco.maps.webmap.tools.TecoRuler.prototype.distance = function(lat1,lon1,lat2,lon2) {
+    var R = 6371000; // earth's radius in meters
+    var dLat = (lat2 - lat1) * Math.PI / 180;
+    var dLon = (lon2 - lon1) * Math.PI / 180;
+    var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+    Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    var d = R * c;
+    return d;
+};
