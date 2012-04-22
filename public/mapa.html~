@@ -61,62 +61,6 @@ p.shadowed span {
 }
 </style><![endif]-->
 
-
-
-
-    <script src="/socket.io/socket.io.js"></script>
-    <script src="mock.js"></script>
-    <script>
-	var tweets=[];
-        var mc='';
-
-function drawClusters() {
-	var markers=b.generateAllPoints(tweets);
-	/*Clusterizando*/
-	var mcOptions = {
-	  gridSize: 50, 
-	  maxZoom: 17  
-	};
-
-	mc = new MarkerClusterer(b.getGMAP(), markers , mcOptions);
-}
-
-function clearClusters(){
-b.clearAllClusters();
-}
-
-      $().ready(function() {	
-
-
-		$.ajax({
-			type: 'get',
-			url: '/tweets',
-			dataType : 'json',
-			success: function(data) {
-				tweets=data;
-				drawClusters();
-
-				// Load sockets
-				var socket = io.connect('/stream');
-				var connected = false;
-				socket.on('connect', function() {
-					connected = true;
-					socket.on('new-tweet', function(tweet) {
-						// this is a new tweet that you must add to the map
-						console.log(tweet);
-						tweets.push(tweet);
-						if(tweets.length > 1000) delete tweet[0];
-						clearClusters();
-						drawClusters();
-					});
-				});
-
-			}
-		});
-    });
-    </script>
-     
-
 </head>
 
 <body onload="">

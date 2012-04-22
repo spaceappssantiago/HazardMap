@@ -70,7 +70,7 @@ var socket=io.of('/stream').on('connection', function(client) {
 	//client.emit('tweet-list', tweets);
 });
 
-create_streaming({track: 'earthquake,dissaster,hurricane,flood,danger,caution,fire,explosion,crash', data: spit_coordinates, error: function(){}});
+create_streaming({track: 'earthquake,dissaster,hurricane,flood,danger,caution,fire,explosion,crash',locations: '-122.75,36.8,-121.75,37.8,-74,40,-73,41', data: spit_coordinates, error: function(){}});
 
 app.listen(3000);
 console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);

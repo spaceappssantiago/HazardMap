@@ -16,7 +16,7 @@ global.create_streaming = function(options) {
     //error: console.log
   };
   
-  twit.stream('statuses/filter', {track: options.track, locations: options.locations },
+  twit.stream('statuses/filter', {track: options.track || default_options.track, locations: options.locations || default_options.locations, },
     function(stream) {
       stream.on('data', options.data);
       stream.on('error', options.error);

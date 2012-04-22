@@ -33,7 +33,7 @@ this.map_id = $(this.map.getDiv()).attr("id");
 };
 
 teco.maps.webmap.tools.TecoRuler.prototype.redraw = function() {
-  this.rulerPoly.setMap(self.map); // GMAP is a global const with the gmap obj
+  this.rulerPoly.setMap(map); // GMAP is a global const with the gmap obj
   this.markers = [];
   this.isFirstDraw=false;
   
@@ -54,7 +54,7 @@ teco.maps.webmap.tools.TecoRuler.prototype.setIsActiveRuler = function(bFlag) {
 teco.maps.webmap.tools.TecoRuler.prototype.init = function() {
 
     var self = this; //emulation of the GEvent.bind method deprecated in api v3
-    google.maps.event.addListener(self.map, 'click', function(event) {
+    google.maps.event.addListener(map, 'click', function(event) {
       if (self.isActiveRuler) {
         self.createVertex(event);
       }
