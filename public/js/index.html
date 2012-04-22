@@ -11,6 +11,7 @@
     <script src="mock.js"></script>
     <script>
 	var tweets=[];
+        var mc='';
 
 function drawClusters() {
 	var markers=b.generateAllPoints(tweets);
@@ -21,6 +22,10 @@ function drawClusters() {
 	};
 
 	mc = new MarkerClusterer(b.getGMAP(), markers , mcOptions);
+}
+
+function clearClusters(){
+b.clearAllClusters();
 }
 
       $().ready(function() {	
@@ -42,6 +47,9 @@ function drawClusters() {
 					socket.on('new-tweet', function(tweet) {
 						// this is a new tweet that you must add to the map
 						console.log(tweet);
+						tweets.push(tweet);
+						if(tweets.length > 1000) delete tweet[0];
+						clearClusters();
 						drawClusters();
 					});
 				});
