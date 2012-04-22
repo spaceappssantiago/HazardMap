@@ -37,7 +37,7 @@ app.get('/map', function(req, res) {
 });
 
 app.get('/tweets', function(req, res) {
-	
+	res.end(JSON.stringify(tweets));
 });
 
 var tweets = [];
