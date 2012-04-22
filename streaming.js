@@ -11,11 +11,12 @@ var twit = new twitter({
 global.create_streaming = function(options) {
   default_options = {
     track: '#spaceapps',
+    locations: '-122.75,36.8,-121.75,37.8,-74,40,-73,41',
     data: console.log,
     error: console.log
   };
-
-  twit.stream('statuses/filter', {track: options.track || default_options.track},
+  
+  twit.stream('statuses/filter', {track: options.track || default_options.track, locations: options.locations || default_options.locations, },
     function(stream) {
       stream.on('data', options.data || default_options.data);
       stream.on('error', options.error || default_options.data);

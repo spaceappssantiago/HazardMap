@@ -36,7 +36,19 @@ app.get('/map', function(req, res) {
 	
 });
 
-create_streaming({track: 'earthquake', data: console.log});
+tweets = [];
+
+function spit_coordinates(data) {
+  if(data && data.coordinates) {
+    coordinates = data.coordinates.coordinates.split(',');
+    lat = coordinates[0];
+    lon = coordinates[1];
+    message = data.text;
+    id = data.id;
+    tweets.push({'latitud': lat, 'longitud': lon, 'id': id, 'descripcion': message});
+  }
+}
+create_streaming({track: 'terremoto', data: spit_coordinates});
 
 
 app.listen(3000);
