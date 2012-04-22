@@ -1,0 +1,93 @@
+// Copyright 2011 The HazardMap Authors.
+// Licensed under the MIT License, see MIT-LICENSE.txt
+
+/**
+ * @fileoverview map_engine is the Engine for the HazardMap project.
+ *
+ * Main controller
+ * @author hernanthiers@gmail.com (Hernán) gustavo@lacosox.org (Gustavo Lacoste)
+ * @supported IE6+, WebKit 525+, Firefox 2+.
+ * @see https://github.com/knxroot/geo_search
+ */
+
+/**
+ * HazardMap class for the project.
+ *
+ * Vars on HazardMap reference to:
+ * w the global context.  In most cases this will be 'window'.
+ * d the current document.
+ * config the global HAZARD_CONFIG config var, HAZARD_CONFIG is defined on
+ * the layout
+ * @class
+ */
+
+var MapEngine = (function(w, d, config, undefined) {
+  var urlRoot = config.urlRoot;
+  var isLoggedIn = config.isLoggedIn ? isLoggedIn : false;
+  var moduleName = config.moduleName;
+  var actionName = config.actionName;
+  var geocoder = new google.maps.Geocoder();
+  var GMAP = 'none';
+  
+  var _setGMAP =
+      function(el,opts){
+        GMAP = new google.maps.Map(el, opts);
+      }
+  var _autoFormStyle=function(form){
+      //
+  }
+  
+  var _geolocationWithMaker=
+    function(marker,callback){
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+          var pos = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+          GMAP.panTo(pos);
+          GMAP.setZoom(11);
+          
+          marker.setPosition(pos);
+          marker.setMap(GMAP);
+          
+          callback && callback(position);
+
+        }, function() {
+          //
+        });
+      }
+    }
+
+
+  return {
+    getModuleName: function(){
+        return moduleName;
+    },
+    getActionName: function(){
+        return actionName;
+    },
+    setGMAP: function(el, opts){
+        _setGMAP(el, opts);
+        
+    },
+    getGMAP: function(){
+        return GMAP;
+    },
+    getUrlRoot: function(){
+        return urlRoot;
+    },
+    getGeocoder: function(){
+        return geocoder;
+    },
+    geolocationWithMaker: function(marker,callback){
+        return _geolocationWithMaker(marker,callback);
+    },
+    autoFormStyle: function(form){
+        return _autoFormStyle(form);
+    },
+    
+    /** Initialize the autocompletation on the field input 'el'. */
+    initAutoCompleteAddr: function(el,callback) {
+        
+      return _autoCompleteAddr(el,callback);
+    }
+  };
+})(this, this.document, GEOSEARCH_CONFIG);
