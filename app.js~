@@ -45,8 +45,8 @@ var tweets = [];
 
 function spit_coordinates(data) {
 //console.log('********************* TEST **********************')
-console.log(tweets);
-console.log(data.coordinates)
+//console.log(tweets);
+//console.log(data.coordinates)
   if(data && data.coordinates) {
     coordinates = data.coordinates.coordinates;
     lon = coordinates[0];
@@ -56,13 +56,9 @@ console.log(data.coordinates)
     
     var tweet={'latitud': lat, 'longitud': lon, 'id': id, 'descripcion': message};
 
-console.log('llegueeeee');
-console.log(tweet)    
+    tweets.push(tweet);
+    if(tweets>1000) delete tweets[0];
 
-//tweets.push(tweet);
-    // TODO: Limit to X number to avoid overflow
-    console.log(tweets);
-    
     socket.emit('new-tweet', tweet);
   }
 }

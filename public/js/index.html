@@ -10,41 +10,45 @@
     <script src="/socket.io/socket.io.js"></script>
     <script src="mock.js"></script>
     <script>
+	var tweets=[];
 
-      $().ready(function() {
+function drawClusters() {
+	var markers=b.generateAllPoints(tweets);
+	/*Clusterizando*/
+	var mcOptions = {
+	  gridSize: 50, 
+	  maxZoom: 17  
+	};
+
+	mc = new MarkerClusterer(b.getGMAP(), markers , mcOptions);
+}
+
+      $().ready(function() {	
+
 
 		$.ajax({
 			type: 'get',
 			url: '/tweets',
 			dataType : 'json',
-			success: function(tweets) {
-alert('hey')
+			success: function(data) {
+				tweets=data;
+				drawClusters();
 
+				// Load sockets
+				var socket = io.connect('/stream');
+				var connected = false;
+				socket.on('connect', function() {
+					connected = true;
+					socket.on('new-tweet', function(tweet) {
+						// this is a new tweet that you must add to the map
+						console.log(tweet);
+						drawClusters();
+					});
+				});
 
-				var markers=b.generateAllPoints(tweets);
-				/*Clusterizando*/
-				var mcOptions = {
-				  gridSize: 50, 
-				  maxZoom: 17  
-				};
-
-				mc = new MarkerClusterer(b.getGMAP(), markers , mcOptions);
 			}
 		});
-/*
-		var socket = io.connect('/stream');
-		var connected = false;
-		socket.on('connect', function() {
-			connected = true;
-			if (connected) {
-				return;
-			}
-			socket.on('new-tweet', function(newTweet) {
-				// this is a new tweet that you must add to the map
-				console.log(newTweet);
-			});
-		});
-*/    });
+    });
     </script>
      
 </head>
