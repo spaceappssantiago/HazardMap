@@ -17,8 +17,8 @@
 			type: 'get',
 			url: '/tweets',
 			dataType : 'json',
-			succes: function(tweets) {
-
+			success: function(tweets) {
+alert('hey')
 
 
 				var markers=b.generateAllPoints(tweets);
@@ -31,7 +31,7 @@
 				mc = new MarkerClusterer(b.getGMAP(), markers , mcOptions);
 			}
 		});
-
+/*
 		var socket = io.connect('/stream');
 		var connected = false;
 		socket.on('connect', function() {
@@ -44,7 +44,7 @@
 				console.log(newTweet);
 			});
 		});
-    });
+*/    });
     </script>
      
 </head>

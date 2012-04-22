@@ -37,6 +37,7 @@ app.get('/map', function(req, res) {
 });
 
 app.get('/tweets', function(req, res) {
+	res.writeHead(200, {'Content-Type': 'application/json'});
 	res.end(JSON.stringify(tweets));
 });
 
@@ -70,7 +71,7 @@ console.log(tweet)
 
 var io = require('socket.io').listen(app);
 var socket=io.of('/stream').on('connection', function(client) {
-	client.emit('tweet-list', tweets);
+	//client.emit('tweet-list', tweets);
 });
 
 create_streaming({track: 'terremoto', data: spit_coordinates, error: function(){}});

@@ -163,6 +163,8 @@ var MapEngine = function(w, d) {
 }
 
 
+var b=MapEngine(this, this.document);
+
 $().ready(function() {
 
 /* CODIGO ORDINARIO */
@@ -193,7 +195,6 @@ return arrayJson;
 
 
 /*Creando el mapa con puntos*/
-var b=MapEngine(this, this.document);
 b.initMapWithResults();
 b.makeLocalMarkerIcon();
 
@@ -203,127 +204,5 @@ algunas otras cositas *******
 *************************************/
 
 GMAP=b.getGMAP(); /** @define {teco.maps.webmap.tools.TecoRuler} */
-var miregla; /** @define {teco.maps.webmap.tools.Core} */
-var tmap, t;
-
-
-goog.require('teco.maps.webmap.tools.TecoRuler');
-goog.require('teco.maps.webmap.tools.TecoDragZoom');
-
-  miregla = new teco.maps.webmap.tools.TecoRuler();
-  miregla.init();
-  midragzoom =  new teco.maps.webmap.tools.TecoDragZoom(GMAP);
-  midragzoom.init();
-  
-  //$('#rulerDialog').dialog('open');
-  //miregla.setIsActiveRuler(true);
-  t = tmap; // *quitar luego
-  //tmap.createMenu('menu');
-  //tmap.openKML('http://www.timberline.cl/losrios/kml/rios.kml');
-
-  $('#capas_ventana').tabbedDialog({
-    autoOpen: true,
-    buttons: {},
-    closeOnEscape: true,
-    closeText: 'Minimizar',
-    dialogClass: 'capas_ventana',
-    draggable: true,
-    hide: null,
-    height: 180,
-    modal: false,
-    position: {
-      my: 'center',
-      at: 'bootom',
-      collision: 'fit',
-      // ensure that the titlebar is never outside the document
-      using: function (pos) {
-        $(this).css('bottom', 15);
-        $(this).css('left', 15);
-        $(this).css('top', 'auto');
-      }
-    },
-    show: null,
-    stack: true,
-    title: '',
-    width: 700,
-    zIndex: 1000
-  });
-
-  $('#capas_ventana').dialog('option', 'resizable', false);
-  $('#capas_ventana').bind('dialogbeforeclose', function (event, ui) {
-    $('#capas_ventana_min').show();
-    $(this).effect('transfer', {
-      to: '#capas_ventana_min',
-      className: 'ui-effects-transfer'
-    }, 500);
-    return true;
-  });
-
-
-  $('#capas_ventana_min').click(function () {
-    $('#capas_ventana').dialog('open').css('top', 'auto').css('height', 169);
-    $('#capas_ventana_min').hide();
-  });
-  
-  $( "#sidebar" ).dialog({
-    autoOpen: true,
-    buttons: {},
-    closeOnEscape: true,
-    closeText: 'Minimizar',
-    dialogClass: 'sidebar',
-    draggable: true,
-    hide: null,
-    position: ['right','top'],
-    show: null,
-    stack: false,
-    title: '',
-    width: 400,
-	resizable: false,
-	zIndex: 1000  
-  });
-  $('#sidebar').bind('dialogbeforeclose', function (event, ui) {
-    $('#sidebar_min').show();
-    $(this).effect('transfer', {
-      to: '#sidebar_min',
-      className: 'ui-effects-transfer'
-    }, 500);
-    return true;
-  });
-  $('#sidebar_min').click(function () {
-    $('#sidebar').dialog('open');
-    $('#sidebar_min').hide();
-  });
-
-  $(":checkbox:checked").each(function(){this.checked = false;});
-$('#waiting').hide();
-
-
-/***********************************
-fin de algunas otras cositas *******
-*************************************/
-
 
 });
-
-function ruleClick(element) {
-  
-  if ($('#rulerDialog').dialog('isOpen')) { 
-    miregla.setIsActiveRuler(false);
-    element.removeClass('ruler-tbl-btn-press').addClass('ruler-tbl-btn-normal');
-    $('#rulerDialog').dialog('close');
-  } else {
-    element.removeClass('ruler-tbl-btn-normal').addClass('ruler-tbl-btn-press');
-    $('#rulerDialog').dialog('open');
-    miregla.setIsActiveRuler(true);
-  }
-}
-function dragZoomClick(element) {
-  if (!midragzoom.isActiveDragginZoom) {
-    midragzoom.startSelection();
-    element.removeClass('dragzoom-tbl-btn-press').addClass('dragzoom-tbl-btn-normal');
-  } else {
-    element.removeClass('dragzoom-tbl-btn-normal').addClass('dragzoom-tbl-btn-press');
-  }   
-        
-}
-

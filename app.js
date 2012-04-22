@@ -59,7 +59,7 @@ console.log(data.coordinates)
 console.log('llegueeeee');
 console.log(tweet)    
 
-//tweets.push(tweet);
+tweets.push(tweet);
     // TODO: Limit to X number to avoid overflow
     console.log(tweets);
     

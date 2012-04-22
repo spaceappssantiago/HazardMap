@@ -163,6 +163,8 @@ var MapEngine = function(w, d) {
 }
 
 
+var b=MapEngine(this, this.document);
+
 $().ready(function() {
 
 /* CODIGO ORDINARIO */
@@ -192,8 +194,9 @@ return arrayJson;
 
 
 
-
-
+/*Creando el mapa con puntos*/
+b.initMapWithResults();
+b.makeLocalMarkerIcon();
 
 
 /***********************************
@@ -201,6 +204,7 @@ algunas otras cositas *******
 *************************************/
 
 GMAP=b.getGMAP(); /** @define {teco.maps.webmap.tools.TecoRuler} */
+
 var miregla; /** @define {teco.maps.webmap.tools.Core} */
 var tmap, t;
 
