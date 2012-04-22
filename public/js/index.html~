@@ -6,27 +6,19 @@
     <script type="text/javascript" src="http://google-maps-utility-library-v3.googlecode.com/svn/tags/markerclustererplus/2.0.9/src/markerclusterer_packed.js"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script>
     <script src="MapEngine.js"></script>
-    
+
     <script src="/socket.io/socket.io.js"></script>
     <script src="mock.js"></script>
     <script>
 
       $().ready(function() {
 
-		var socket = io.connect('/stream');
-		var connected = false;
-		socket.on('connect', function() {
-			connected = true;
-			if (connected) {
-				return;
-			}
-			socket.on('tweet-list', function(tweets) {
-				console.log(mock);
+		$.ajax({
+			type: 'get',
+			url: '/tweets',
+			dataType : 'json',
+			succes: function(tweets) {
 
-				/*Creando el mapa con puntos*/
-				var b=MapEngine(this, this.document);
-				b.initMapWithResults();
-				b.makeLocalMarkerIcon();
 
 
 				var markers=b.generateAllPoints(mock);
@@ -37,9 +29,16 @@
 				};
 
 				mc = new MarkerClusterer(b.getGMAP(), markers , mcOptions);
+			}
+		});
 
-
-			});
+		var socket = io.connect('/stream');
+		var connected = false;
+		socket.on('connect', function() {
+			connected = true;
+			if (connected) {
+				return;
+			}
 			socket.on('new-tweet', function(newTweet) {
 				// this is a new tweet that you must add to the map
 				console.log(newTweet);

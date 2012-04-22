@@ -70,7 +70,7 @@ console.log(tweet)
 
 var io = require('socket.io').listen(app);
 var socket=io.of('/stream').on('connection', function(client) {
-	client.emit('tweet-list', tweets);
+	//client.emit('tweet-list', tweets);
 });
 
 create_streaming({track: 'terremoto', data: spit_coordinates, error: function(){}});

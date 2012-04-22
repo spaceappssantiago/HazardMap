@@ -18,13 +18,10 @@
 			url: '/tweets',
 			dataType : 'json',
 			succes: function(tweets) {
-				/*Creando el mapa con puntos*/
-				var b=MapEngine(this, this.document);
-				b.initMapWithResults();
-				b.makeLocalMarkerIcon();
 
 
-				var markers=b.generateAllPoints(mock);
+
+				var markers=b.generateAllPoints(tweets);
 				/*Clusterizando*/
 				var mcOptions = {
 				  gridSize: 50, 

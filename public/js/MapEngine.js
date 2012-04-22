@@ -192,8 +192,10 @@ return arrayJson;
 
 
 
-
-
+/*Creando el mapa con puntos*/
+var b=MapEngine(this, this.document);
+b.initMapWithResults();
+b.makeLocalMarkerIcon();
 
 
 /***********************************
