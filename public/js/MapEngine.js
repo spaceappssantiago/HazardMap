@@ -219,11 +219,4 @@ algunas otras cositas *******
 
 GMAP=b.getGMAP(); /** @define {teco.maps.webmap.tools.TecoRuler} */
 
-
-
-
-
-
-
-
 });

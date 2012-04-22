@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta name="title" content="Hazard Map"/>
+<title>Hazard Map</title>
+
+<link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+
+<link rel="stylesheet" type="text/css" media="screen" href="stylesheets/reset.css"/>
+<link rel="stylesheet" type="text/css" media="screen" href="stylesheets/text.css"/>
+<link rel="stylesheet" type="text/css" media="screen" href="stylesheets/960.css"/>
+<link rel="stylesheet" type="text/css" media="screen" href="stylesheets/smoothness/jquery-ui-1.8.13.custom.css"/>
+<link rel="stylesheet" type="text/css" media="screen" href="stylesheets/main.css"/>
+
+<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false&libraries=panoramio"></script>
+<!--  no lo necesitamos ? -->
+<script type="text/javascript" src="js/google-maps-utility-library-v3/markerwithlabel/src/markerwithlabel_packed.js"></script>
+<script type="text/javascript" src="js/closure-library/closure/goog/base.js"></script>
+<!-- no lo necesitabamos ? -->
+
+<script type="text/javascript" src="js/jquery-librarys/jquery-1.5.1.min.js"></script>
+<script type="text/javascript" src="js/jquery-librarys/jquery-ui-1.8.13.custom.min.js"></script>
+<script type="text/javascript" src="js/others-librarys/jwplayer.js"></script>
+<script type="text/javascript" src="js/others-librarys/Concurrent.Thread.js"></script>
+
+<link rel="stylesheet" type="text/css" href="js/others-librarys/lightbox/themes/default/jquery.lightbox.css" />
+<!--[if IE 6]><link rel="stylesheet" type="text/css" href="js/others-librarys/lightbox/themes/default/jquery.lightbox.ie6.css" /><![endif]-->
+<script type="text/javascript" src="js/others-librarys/lightbox/jquery.lightbox.min.js"></script>
+<script type="text/javascript" src="http://google-maps-utility-library-v3.googlecode.com/svn/tags/markerclustererplus/2.0.9/src/markerclusterer_packed.js"></script>
+
+<script type="text/javascript" src="js/teco-library/teco-extjquery.js"></script>
+<script type="text/javascript" src="js/teco-library/TecoRuler.js"></script>
+<script type="text/javascript" src="js/teco-library/TecoDragZoom.js"></script>
+
+
+ <script type="text/javascript" src="js/MapEngine.js"></script> 
+
+<!-- <script type="text/javascript" src="js/teco-library/teco-webmapping.js"></script> -->
+
+<!-- <script type="text/javascript" src="js/mod_mapa.js"></script> -->
+
+
+<style type="text/css">
+/*estilos de los labels*/
+p.shadowed {
+    font: 9px/1.1 'Arial',Verdana,FreeSans,sans-serif;
+  text-shadow: #000000 0px 3px 3px;
+  font-weight: bold;
+  color: #fff;
+}
+</style>
+<!--[if IE]><style type="text/css">
+p.shadowed span {
+    font: 9px/1.1 'Arial',Verdana,FreeSans,sans-serif;
+  display: block;
+  width: 100%;
+  filter: glow(color=#000000,strength=3);
+  font-weight: bold;
+  color: #fff;
+}
+</style><![endif]-->
+
+</head>
+
+<body onload="">
+
+
+
+<div id="map-wrapper" style="width: 100%; height: 100%;">
+  <div id="map_canvas">
+  </div>
+  <div id="conectar_bd_waiting" class="centrar ui-corner-bottom" 
+  		style=" -moz-border-radius: 2px 0 0 2px; -moz-box-shadow: 2px 2px 3px rgba(0, 0, 0, 0.35); -moz-user-select: none; background: #f02311 repeat scroll 0 0; border: 1px solid #ff0000; color: white; direction: ltr; font-family: arial,sans-serif; font-size: 12px; font-weight: bold; line-height: 160%; min-width: 33px; overflow: hidden; padding: 0 6px; position: absolute;top: 0px;margin-left: -40px; z-index:1000; text-align: center; visibility:hidden;">
+    Cargando...
+  </div>
+</div>
+
+
+<!-- Start Dialog TecoRuler -->
+<div id="rulerDialog" style="display: none;">
+  <ul>
+    <li><a href="#rulerDialog_ruta">Ruta</a></li>
+    <li class="ui-tab-dialog-close"></li>
+  </ul>
+  <div>
+    <div id="rulerDialog_ruta">
+      <div style="margin:0;padding:0;position:absolute;left:7px;top:4px;width:253px;height:30px;text-align:justify;z-index:4;">
+      <font style="font-size:9px" color="#000000" face="Verdana">Mide la distancia entre distintos puntos en el suelo</font></div>
+      <div style="margin:0;padding:0;position:absolute;left:9px;top:45px;width:59px;height:15px;text-align:left;z-index:1;">
+      <font style="font-size:9px" color="#000000" face="Verdana"><b>Longitud:</b></font></div>
+      <div id="total-measured-length" style="margin:0;padding:0;position:absolute;left:79px;top:44px;width:82px;height:14px;text-align:right;z-index:3;">
+      <font style="font-size:9px" color="#000000" face="Verdana">102,18</font></div>
+      <div style="position:absolute;left:169px;top:41px;width:90px;height:20px;border:1px #C0C0C0 solid;z-index:2">
+      <select name="conversion_scale" size="1" id="conversion_scale" style="position:absolute;left:0px;top:0px;width:100%;height:100%;border-width:0px;font-family:Verdana;font-size:9px;">
+                <option value="cm">Centímetros</option>
+                <option selected value="m">Metros</option>
+                <option value="km">Kilómetros</option>
+                <option value="mi">Millas</option>
+      </select>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Fin Dialog TecoRuler -->
+
+<div id="sidebar" title="" style="visibility: visible;">
+  <div id="media_text">
+    <div id="dynamic_media">
+    
+    			 <input type="text" id="find" 
+              	style="left:10px;top:10px;width:284px;height:25px;"
+                 name="find" 
+                 value="Buscar..." 
+                 onblur="if(this.value==''){this.value='Buscar...';$(this).removeClass('inputvalido');}"
+                  onfocus="if(this.value=='Buscar...'){this.value='';$(this).addClass('inputvalido'); }" 
+                 title="Buscar..."
+                  class="formbusqueda">
+              
+              <input id="index_find_btn" 
+              name="buscar_btn" 
+              value="Buscar" 
+              type="submit" 
+              style="" 
+              class="ui-button ui-widget ui-state-default ui-corner-all ui-state-hover ui-state-active" 
+              role="button" 
+              aria-disabled="false">
+              
+              
+          	<p>&nbsp;</p>
+              <br>
+      
+              <h2 class="toggler">Herramientas</h2>
+ 
+      
+      		<div class="element">
+              
+             
+              
+              
+               <div id="contenido_herramientas">
+
+  			    <div id="tecoRulerTglbtn" class="btntbl ruler-tbl-btn-normal" 
+ 		            style="float:left;" onclick="ruleClick($(this));">
+  			    </div>
+      			<div style="width: 300px;margin-left:30px">
+			        Herramienta de medición de distancias
+		        </div><br>     
+            
+      <div id="tecoDragZoomTglbtn" class="btnzoom dragzoom-tbl-btn-normal" 
+             style="float:left;" onclick="dragZoomClick($(this));">
+      </div>
+      <div style="width: 300px;margin-left:30px">
+        Marcar y acercar
+      </div><br>
+
+    </div>
+    
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+</div>
+
+
+
+<div id="sidebar_min" class="ui-state-default ui-corner-all" style="display: none;">
+  <div class="HGB">
+    <!-- titulillo aqui -->
+  </div>
+  <div id="sidebar_min_restore" class="FGB">
+    <span class="ui-icon ui-icon-newwin"></span>
+  </div>
+</div>
+
+
+<script>
+  $(window).load(function(){  
+
+  });
+</script>
+            
+
+</body>
+</html>
