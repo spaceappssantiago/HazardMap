@@ -45,11 +45,24 @@ function spit_coordinates(data) {
     lon = coordinates[1];
     message = data.text;
     id = data.id;
-    tweets.push({'latitud': lat, 'longitud': lon, 'id': id, 'descripcion': message});
+    
+    var tweet={'latitud': lat, 'longitud': lon, 'id': id, 'descripcion': message};
+    tweets.push(tweet);
+    // TODO: Limit to X number to avoid overflow
+    
+    socket.emit('new-tweet', tweet);
   }
 }
-create_streaming({track: 'terremoto', data: spit_coordinates});
 
+// Web-Sockets
+var io = require('socket.io').listen(app);
+var socket=io.of('/stream').on('connection', function(client) {
+	client.on('subscribe', function() {
+		client.emit('tweet-list', tweets);
+	});
+});
+
+create_streaming({track: 'terremoto', data: spit_coordinates});
 
 app.listen(3000);
 console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
