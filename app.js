@@ -37,6 +37,7 @@ app.get('/map', function(req, res) {
 });
 
 app.get('/tweets', function(req, res) {
+	res.writeHead(200, {'Content-Type': 'application/json'});
 	res.end(JSON.stringify(tweets));
 });
 
