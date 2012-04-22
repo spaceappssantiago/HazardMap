@@ -5,29 +5,50 @@
     <script src="http://maps.google.com/maps/api/js?v=3.5&region=CL&sensor=true"></script>
     <script type="text/javascript" src="http://google-maps-utility-library-v3.googlecode.com/svn/tags/markerclustererplus/2.0.9/src/markerclusterer_packed.js"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script>
-<<<<<<< HEAD
-    <script src="MapEngine.js"></script> 
-=======
     <script src="MapEngine.js"></script>
     
     <script src="/socket.io/socket.io.js"></script>
+    <script src="mock.js"></script>
     <script>
-	/*	var socket = io.connect('/stream');
+
+      $().ready(function() {
+
+		var socket = io.connect('/stream');
 		var connected = false;
 		socket.on('connect', function() {
 			connected = true;
+			if (connected) {
+				return;
+			}
 			socket.on('tweet-list', function(tweets) {
-				// this is the initial list of tweets to load the map 
-                                console.log(tweets);
+
+				console.log(mock);
+
+				/*Creando el mapa con puntos*/
+				var b=MapEngine(this, this.document);
+				b.initMapWithResults();
+				b.makeLocalMarkerIcon();
+
+
+				var markers=b.generateAllPoints(mock);
+				/*Clusterizando*/
+				var mcOptions = {
+				  gridSize: 50, 
+				  maxZoom: 17  
+				};
+
+				mc = new MarkerClusterer(b.getGMAP(), markers , mcOptions);
+
+
 			});
 			socket.on('new-tweet', function(newTweet) {
 				// this is a new tweet that you must add to the map
 				console.log(newTweet);
 			});
-		});*/
+		});
+    });
     </script>
      
->>>>>>> 96aa6a3f5bb872eeed7360f11267e92cc5e2f475
 </head>
     <body>
 <div id="map_canvas" style="width: 800px; height: 800px; background-color:red">

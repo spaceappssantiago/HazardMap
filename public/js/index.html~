@@ -8,20 +8,44 @@
     <script src="MapEngine.js"></script>
     
     <script src="/socket.io/socket.io.js"></script>
+    <script src="mock.js"></script>
     <script>
+
+      $().ready(function() {
+
 		var socket = io.connect('/stream');
 		var connected = false;
 		socket.on('connect', function() {
 			connected = true;
+			if (connected) {
+				return;
+			}
 			socket.on('tweet-list', function(tweets) {
-				// this is the initial list of tweets to load the map 
-                                console.log(tweets);
+				console.log(mock);
+
+				/*Creando el mapa con puntos*/
+				var b=MapEngine(this, this.document);
+				b.initMapWithResults();
+				b.makeLocalMarkerIcon();
+
+
+				var markers=b.generateAllPoints(mock);
+				/*Clusterizando*/
+				var mcOptions = {
+				  gridSize: 50, 
+				  maxZoom: 17  
+				};
+
+				mc = new MarkerClusterer(b.getGMAP(), markers , mcOptions);
+
+
 			});
 			socket.on('new-tweet', function(newTweet) {
 				// this is a new tweet that you must add to the map
 				console.log(newTweet);
 			});
 		});
+    });
     </script>
      
 </head>
