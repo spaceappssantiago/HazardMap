@@ -4,7 +4,8 @@
  */
 
 var express = require('express')
-  , routes = require('./routes');
+  , routes = require('./routes')
+  , streaming = require('./streaming');
 
 var app = module.exports = express.createServer();
 
@@ -35,7 +36,7 @@ app.get('/map', function(req, res) {
 	
 });
 
-
+create_streaming({track: 'earthquake', data: console.log});
 
 
 app.listen(3000);
